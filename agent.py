@@ -18,8 +18,13 @@ import sys
 from pathlib import Path
 
 _HERE = Path(__file__).resolve().parent
-_ROOT = _HERE if (_HERE / "src" / "bootcamp_agent").is_dir() else _HERE.parent
-sys.path.insert(0, str(_ROOT / "src"))
+if (_HERE / "data" / "corpus").is_dir():
+    CORPUS_DIR = _HERE / "data" / "corpus"
+elif (_HERE.parent / "data" / "corpus").is_dir():
+    sys.path.insert(0, str(_HERE.parent / "src"))
+    CORPUS_DIR = _HERE.parent / "data" / "corpus"
+else:
+    CORPUS_DIR = _HERE / "data" / "corpus"
 
 from bootcamp_agent.agent import REFUSAL_TEXT, _as_ids  # noqa: PLC2701
 from bootcamp_agent.config import load_settings
@@ -32,8 +37,6 @@ from bootcamp_agent.schema import (
     ResearchAnswer,
     parse_research_answer,
 )
-
-CORPUS_DIR = _ROOT / "data" / "corpus"
 
 #: Weak matches are noise — refuse before spending a model call (fa-09).
 _MIN_RETRIEVAL_SCORE = 5.0
